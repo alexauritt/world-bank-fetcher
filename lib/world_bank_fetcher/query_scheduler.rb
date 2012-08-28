@@ -8,7 +8,7 @@ module WorldBankFetcher
     end
     
     def execute!
-      query.per_page(WorldBankFetcher::MAXIMUM_BUFFER_SIZE)
+      query.per_page(MAXIMUM_BUFFER_SIZE)
       begin
         if query.is_a? WorldBank::ParamQuery
           fetch_param_query!

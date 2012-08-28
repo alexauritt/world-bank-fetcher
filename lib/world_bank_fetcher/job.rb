@@ -15,9 +15,9 @@ module WorldBankFetcher
       data = fetch_all_data query
       if data
         if @job_type == :indicator
-          @results = WorldBankFetcher::DataParser.parse data
+          @results = DataParser.parse data
         else
-          @results = WordBankFetcher::CountryParser.parse data
+          @results = CountryParser.parse data
         end
         
         @checksum = Digest::MD5.hexdigest Marshal.dump(@results)
@@ -46,8 +46,8 @@ module WorldBankFetcher
     end
     
     def fetch_all_data(query)
-      scheduler = WorldBankFetcher::QueryScheduler.new query
-      query.per_page(WorldBankFetcher::MAXIMUM_BUFFER_SIZE)
+      scheduler = QueryScheduler.new query
+      query.per_page(MAXIMUM_BUFFER_SIZE)
       scheduler.execute!
     end
   end
