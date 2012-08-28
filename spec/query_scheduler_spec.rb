@@ -54,6 +54,29 @@ module WorldBankFetcher
     
       results = scheduler.execute!
       results.should eq([:some, :stuff, :goes, :here, :some, :stuff, :goes, :here])
-    end  
+    end
+    
+    it "should check for param queries, and raise if buffer maxed out" do
+      param_query = WorldBank::Country.all
+      param_query.should_not_receive(:total)
+      param_query.stub(:fetch).and_return(fake_results)
+      scheduler = QueryScheduler.new(param_query)
+      scheduler.execute!
+    end
+    
+    it "should fetch for param query exactly once" do
+      param_query = WorldBank::Country.all
+      param_query.should_receive(:fetch).once.and_return(fake_results)
+      scheduler = QueryScheduler.new(param_query)
+      scheduler.execute!      
+    end
+    
+    it "should return nil if scheduler returns sardine packed results for param query" do
+      param_query = WorldBank::Country.all
+      sardines = Array(1..MAXIMUM_BUFFER_SIZE)
+      param_query.should_receive(:fetch).once.and_return(sardines)
+      scheduler = QueryScheduler.new(param_query)
+      scheduler.execute!.should be_nil      
+    end
   end
 end

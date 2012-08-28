@@ -2,18 +2,29 @@ require 'world_bank'
 
 module WorldBankFetcher
   class Job
-    attr_reader :indicator_string, :results, :checksum
+    attr_reader :results, :checksum
     
     def initialize(options)
-      @indicator_string = indicator_string
       @results = nil
       @checksum = nil
-      
+      @job_type = options[:indicator] ? :indicator : :country
       @query = build_query options
     end
     
     def fetch
-      fetch_all_data query
+      data = fetch_all_data query
+      if data
+        if @job_type == :indicator
+          @results = WorldBankFetcher::DataParser.parse data
+        else
+          @results = data.map {|datum| datum.name }
+        end
+        
+        @checksum = Digest::MD5.hexdigest Marshal.dump(@results)
+        {:results => @results, :checksum => @checksum}
+      else
+        nil
+      end
     end
 
     private
@@ -37,14 +48,7 @@ module WorldBankFetcher
     def fetch_all_data(query)
       scheduler = WorldBankFetcher::QueryScheduler.new query
       query.per_page(WorldBankFetcher::MAXIMUM_BUFFER_SIZE)
-      data = scheduler.execute!
-      if data.nil?
-        nil
-      else
-        @results = WorldBankFetcher::DataParser.parse data
-        @checksum = Digest::MD5.hexdigest Marshal.dump(@results)
-        {:results => @results, :checksum => @checksum}
-      end
+      scheduler.execute!
     end
   end
 end
