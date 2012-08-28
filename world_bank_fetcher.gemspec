@@ -4,8 +4,8 @@ require File.expand_path('../lib/world_bank_fetcher/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Alexander Auritt"]
   gem.email         = ["alexauritt@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{For caching WorldBank data in a local db}
+  gem.summary       = %q{Fetches local WorldBank country and indicator data.}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
