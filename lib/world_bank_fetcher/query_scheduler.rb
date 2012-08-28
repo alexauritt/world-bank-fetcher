@@ -42,7 +42,7 @@ module WorldBankFetcher
     
     def total_queries
       query.per_page(1).fetch unless query.total
-      (query.total / WorldBankFetcher::MAXIMUM_BUFFER_SIZE.to_f).ceil
+      (query.total / MAXIMUM_BUFFER_SIZE.to_f).ceil
     end
 
     def results=(results)
