@@ -9,5 +9,5 @@ task :test => :spec
 task :default => :spec
 
 task :queries do
-  puts WorldBankFetcher::Job.new('SP.POP.TOTL').fetch ? "QUERY SUCCESSFUL!" : "QUERY FAILURE!!!!!!!!!!"
+  puts WorldBankFetcher::Job.new(:indicator => 'SP.POP.TOTL').fetch ? "QUERY SUCCESSFUL!" : "QUERY FAILURE!!!!!!!!!!"
 end
