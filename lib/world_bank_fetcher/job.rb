@@ -17,7 +17,7 @@ module WorldBankFetcher
         if @job_type == :indicator
           @results = WorldBankFetcher::DataParser.parse data
         else
-          @results = data.map {|datum| datum.name }
+          @results = WordBankFetcher::CountryParser.parse data
         end
         
         @checksum = Digest::MD5.hexdigest Marshal.dump(@results)
