@@ -2,10 +2,18 @@ require 'helper'
 
 module WorldBankFetcher
   describe CountryParser do
-    it "should parse country objects" do
-      france = mock_country('France', "Paris", "Europe")
+    let(:france) { mock_country('France', "Paris", "Europe") }
+    let(:canada) { mock_country('Canada', "Ottawa", "North America") }
+    
+    it "should parse a country object" do
       expected = [{:name => "France", :capital => "Paris", :region => "Europe"}]
       CountryParser.parse([france]).should eq(expected)
+    end
+    
+    it "should parse multiple country objects" do
+      expected = [{:name => "France", :capital => "Paris", :region => "Europe"},
+        {:name => "Canada", :capital => "Ottawa", :region => "North America"} ]
+      CountryParser.parse([france, canada]).should eq(expected)
     end
     
     private
