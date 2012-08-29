@@ -12,8 +12,9 @@ module WorldBankFetcher
     end
     
     def fetch
-      data = fetch_all_data query
-      if data        
+      all_data = fetch_all_data query
+      if all_data
+        data = @job_type == :indicator ? all_data : CountryParser.filter(all_data)
         @checksum = checksum data
         {:results => data, :checksum => @checksum}
       else
