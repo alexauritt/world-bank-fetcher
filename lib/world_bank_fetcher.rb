@@ -6,6 +6,6 @@ require 'world_bank_fetcher/data_parser'
 require 'world_bank_fetcher/country_parser'
 
 module WorldBankFetcher
-  MAXIMUM_BUFFER_SIZE = 500
+  MAXIMUM_BUFFER_SIZE = 10000
   DEFAULT_INITIAL_BUFFER_SIZE = 50
 end
