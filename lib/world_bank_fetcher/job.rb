@@ -13,14 +13,8 @@ module WorldBankFetcher
     
     def fetch
       data = fetch_all_data query
-      if data
-        if @job_type == :indicator
-          @results = DataParser.parse data
-        else
-          @results = CountryParser.parse data
-        end
-        
-        @checksum = Digest::MD5.hexdigest Marshal.dump(@results)
+      if data        
+        @checksum = checksum data
         {:results => @results, :checksum => @checksum}
       else
         nil
@@ -28,6 +22,10 @@ module WorldBankFetcher
     end
 
     private
+    
+    def checksum(data)
+      Digest::MD5.hexdigest Marshal.dump(data)
+    end
     
     def build_query(options)
       options[:indicator] ? indicator_query(options[:indicator]) : countries_query

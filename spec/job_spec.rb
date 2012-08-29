@@ -42,28 +42,21 @@ module WorldBankFetcher
         job = Job.new(:indicator => indicator_string)
         job.fetch.should be_an_instance_of(Hash)
       end
-    
-      it "should receive same checksum if scheduler returns identical results" do
-        WorldBank::DataQuery.any_instance.stub(:total).and_return(39)
-        QueryScheduler.any_instance.stub(:execute!).and_return(:something)
-
-        job = Job.new(:indicator => indicator_string)
-        first = job.fetch[:checksum]
-        second = job.fetch[:checksum]
-        first.should eq(second)
-      end
-    
-      it "should return unique checksums given unique results" do
-
-        DataParser.should_receive(:parse).twice.and_return(:something, :something_else)
-        WorldBank::DataQuery.any_instance.stub(:total).and_return(39)
-        QueryScheduler.any_instance.stub(:execute!).and_return(:some_stuff)
-
-        job = Job.new(:indicator => indicator_string)
-        second_job = Job.new :indicator => 'different string'
-        first = job.fetch[:checksum]
-        second = second_job.fetch[:checksum]
-        first.should_not eq(second)      
+  
+      context 'checksum' do
+        it "should return unique checksums given unique results" do
+          job = Job.new(:indicator => indicator_string)
+          d1 = [:blah, :blog, :dj]
+          d2 = [:bjad, :awe, :asdf]
+          job.send(:checksum, d1).should_not eq(job.send(:checksum, d2))
+        end
+        
+        it "should receive same checksum if scheduler returns identical results" do
+          job = Job.new(:indicator => indicator_string)
+          d1 = [:blah, :blog, :dj]
+          job.send(:checksum, d1).should eq(job.send(:checksum, d1))          
+        end
+        
       end
     end    
     
