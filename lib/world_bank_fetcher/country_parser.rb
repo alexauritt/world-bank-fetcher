@@ -4,7 +4,20 @@ module WorldBankFetcher
   class CountryParser
 
     def self.filter(data_collection)
+      if (data_collection.first.is_a? WorldBank::Country)
+        filter_countries data_collection
+      else
+        filter_data_from_non_countries data_collection
+      end        
+    end
+    
+    private
+    def self.filter_countries(data_collection)
       data_collection.reject {|country| non_country_codes.include? country.iso2_code }
+    end
+    
+    def self.filter_data_from_non_countries(data_collection)
+      data_collection.reject { |datum| non_country_codes.include? datum.raw.country.id }
     end
     
     def self.non_country_codes

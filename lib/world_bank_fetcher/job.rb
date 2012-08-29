@@ -12,9 +12,9 @@ module WorldBankFetcher
     end
     
     def fetch
-      all_data = fetch_all_data query
+      all_data = fetch_everything query
       if all_data
-        data = @job_type == :indicator ? all_data : CountryParser.filter(all_data)
+        data = CountryParser.filter(all_data)
         @checksum = checksum data
         {:results => data, :checksum => @checksum}
       else
@@ -44,7 +44,7 @@ module WorldBankFetcher
       @query
     end
     
-    def fetch_all_data(query)
+    def fetch_everything(query)
       scheduler = QueryScheduler.new query
       query.per_page(MAXIMUM_BUFFER_SIZE)
       scheduler.execute!

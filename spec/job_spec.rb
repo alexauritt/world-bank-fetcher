@@ -2,6 +2,12 @@ require 'helper'
 
 module WorldBankFetcher
   describe Job do
+    before do
+      CountryParser.stub!(:filter) do |arg|
+        arg
+      end
+    end
+    
     let(:indicator_string) { 'SP.POP.TOTL' }
         
     context 'initialize' do
