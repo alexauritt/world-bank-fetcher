@@ -15,7 +15,7 @@ module WorldBankFetcher
       data = fetch_all_data query
       if data        
         @checksum = checksum data
-        {:results => @results, :checksum => @checksum}
+        {:results => data, :checksum => @checksum}
       else
         nil
       end
