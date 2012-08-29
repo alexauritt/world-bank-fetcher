@@ -3,10 +3,6 @@ require 'helper'
 module WorldBankFetcher
   describe Job do
     let(:indicator_string) { 'SP.POP.TOTL' }
-
-    before do
-      DataParser.stub(:parse).and_return(:something)
-    end
         
     context 'initialize' do
       it "should accept hash w/ indicator to specify job type in intializer" do
