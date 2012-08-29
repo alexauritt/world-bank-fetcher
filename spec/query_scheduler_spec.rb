@@ -34,17 +34,15 @@ module WorldBankFetcher
       fake_results = scheduler.execute!
     end
   
-    it "should call preliminary fetch on query if total is nil, then full data query" do
-      query.should_receive(:total).and_return(nil)
-      query.should_receive(:fetch).twice.and_return(fake_results)
-      query.should_receive(:total).and_return(DEFAULT_INITIAL_BUFFER_SIZE - 1)
+    it "should only call fetch once if all data received in first fetch" do
+      query.should_receive(:fetch).once.and_return(fake_results)
+      query.should_receive(:total).and_return(MAXIMUM_BUFFER_SIZE - 1)
       scheduler.execute!
     end
 
     it "should call preliminary fetch on query if total is nil, then two full data queries given larger data set" do
-      query.should_receive(:total).and_return(nil)
-      query.should_receive(:fetch).exactly(3).times.and_return(fake_results)
-      query.should_receive(:total).and_return(MAXIMUM_BUFFER_SIZE + 1)
+      query.should_receive(:fetch).twice.and_return(fake_results)
+      query.stub(:total).and_return(MAXIMUM_BUFFER_SIZE + 1)      
       scheduler.execute!
     end
   

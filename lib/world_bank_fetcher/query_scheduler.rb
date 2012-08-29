@@ -30,17 +30,20 @@ module WorldBankFetcher
     end
     
     def fetch_data_query!
-      results = []
-      total_queries.times do |i|
-        res = query.page(i+1).fetch
-        return nil if res.nil?
-        results.concat res
+      results = query.fetch
+      if query.total > MAXIMUM_BUFFER_SIZE
+        total_queries.times do |i|
+          unless i == 0
+            results.concat query.page(i+1).fetch
+          end
+        end
+        results
+      else
+        results
       end
-      results      
     end
     
     def total_queries
-      query.per_page(1).fetch unless query.total
       (query.total / MAXIMUM_BUFFER_SIZE.to_f).ceil
     end
   end  
