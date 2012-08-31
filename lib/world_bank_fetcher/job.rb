@@ -15,19 +15,14 @@ module WorldBankFetcher
       all_data = fetch_everything query
       if all_data
         data = CountryParser.filter(all_data)
-        @checksum = checksum data
-        {:results => data, :checksum => @checksum}
+        data
       else
         nil
       end
     end
 
     private
-    
-    def checksum(data)
-      Digest::MD5.hexdigest Marshal.dump(data)
-    end
-    
+        
     def build_query(options)
       options[:indicator] ? indicator_query(options[:indicator]) : countries_query
     end
