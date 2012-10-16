@@ -6,6 +6,10 @@ module WorldBankFetcher
       CountryParser.stub!(:filter) do |arg|
         arg
       end
+      
+      IndicatorDataParser.stub!(:filter) do |arg|
+        arg
+      end
     end
     
     let(:indicator_string) { 'SP.POP.TOTL' }
