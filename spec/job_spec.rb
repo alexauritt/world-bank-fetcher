@@ -23,18 +23,32 @@ module WorldBankFetcher
     end
 
     context 'fetch' do
-      
-      it "should not use CountryParser to filter for indicator jobs" do
-        WorldBank::DataQuery.any_instance.stub(:total).and_return(39)
-        QueryScheduler.any_instance.should_receive(:execute!).and_return(:something)
+      context 'filtering' do
+        it "should not use IndicatorDataParser to filter for country jobs" do
+          IndicatorDataParser.should_not_receive(:filter)
+          Job.new(:countries => true).fetch          
+        end
+        
+        it "should use IndicatorDataParser to filter for indicator jobs" do
+          WorldBank::DataQuery.any_instance.stub(:total).and_return(39)
+          QueryScheduler.any_instance.should_receive(:execute!).and_return(:something)
 
-        CountryParser.should_not_receive(:filter)
-        Job.new(:indicator => indicator_string).fetch        
-      end
+          IndicatorDataParser.should_receive(:filter)
+          Job.new(:indicator => indicator_string).fetch                  
+        end
+        
+        it "should not use CountryParser to filter for indicator jobs" do
+          WorldBank::DataQuery.any_instance.stub(:total).and_return(39)
+          QueryScheduler.any_instance.should_receive(:execute!).and_return(:something)
+
+          CountryParser.should_not_receive(:filter)
+          Job.new(:indicator => indicator_string).fetch        
+        end
       
-      it "should use CountryParser to filter for country jobs" do
-        CountryParser.should_receive(:filter)
-        Job.new(:countries => true).fetch
+        it "should use CountryParser to filter for country jobs" do
+          CountryParser.should_receive(:filter)
+          Job.new(:countries => true).fetch
+        end
       end
       
       it "should return nil if query shceduler returns nil" do
