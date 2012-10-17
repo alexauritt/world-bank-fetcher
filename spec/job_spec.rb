@@ -1,7 +1,13 @@
 require 'helper'
 
 module WorldBankFetcher
-  describe Job do    
+  describe Job do
+    before do      
+      IndicatorDataParser.stub!(:filter) do |arg|
+        arg
+      end
+    end
+    
     let(:indicator_string) { 'SP.POP.TOTL' }
         
     describe 'initialize' do
@@ -18,7 +24,35 @@ module WorldBankFetcher
       end
     end
 
-    describe 'fetch' do
+    context 'fetch' do
+      context 'filtering' do
+        it "should not use IndicatorDataParser to filter for country jobs" do
+          IndicatorDataParser.should_not_receive(:filter)
+          Job.new(:countries => true).fetch          
+        end
+        
+        it "should use IndicatorDataParser to filter for indicator jobs" do
+          WorldBank::DataQuery.any_instance.stub(:total).and_return(39)
+          QueryScheduler.any_instance.should_receive(:execute!).and_return(:something)
+
+          IndicatorDataParser.should_receive(:filter)
+          Job.new(:indicator => indicator_string).fetch                  
+        end
+        
+        it "should not use CountryParser to filter for indicator jobs" do
+          WorldBank::DataQuery.any_instance.stub(:total).and_return(39)
+          QueryScheduler.any_instance.should_receive(:execute!).and_return(:something)
+
+          CountryParser.should_not_receive(:filter)
+          Job.new(:indicator => indicator_string).fetch        
+        end
+      
+        it "should use CountryParser to filter for country jobs" do
+          CountryParser.should_receive(:filter)
+          Job.new(:countries => true).fetch
+        end
+      end
+      
       it "should return nil if query shceduler returns nil" do
         country_parser_filters_nothing!
         QueryScheduler.any_instance.should_receive(:execute!).and_return(nil)
@@ -33,9 +67,9 @@ module WorldBankFetcher
         job.fetch.should_not be_nil
       end
     
-      it "filters return value from Query Scheduler through CountryParser" do
+      it "filters return value from Query Scheduler through IndicatorDataParser" do
         QueryScheduler.any_instance.should_receive(:execute!).and_return(:something)
-        CountryParser.should_receive(:filter).with(:something).and_return(:something_else)
+        IndicatorDataParser.should_receive(:filter).with(:something).and_return(:something_else)
         job = Job.new(:indicator => indicator_string)
         job.fetch.should eq(:something_else)
       end
