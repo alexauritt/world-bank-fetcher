@@ -11,13 +11,17 @@ module WorldBankFetcher
       end        
     end
     
+    def self.data_from_official_country?(datum)
+      non_country_codes.include? datum.raw.country.id
+    end
+    
     private
     def self.filter_countries(data_collection)
       data_collection.reject {|country| non_country_codes.include? country.iso2_code }
     end
     
     def self.filter_data_from_non_countries(data_collection)
-      data_collection.reject { |datum| non_country_codes.include? datum.raw.country.id }
+      data_collection.reject { |datum| data_from_official_country? datum }
     end
     
     def self.non_country_codes
