@@ -8,7 +8,6 @@ module WorldBankFetcher
     let(:bad_data_1) { WorldBank::Data.new(attrs_with 'value' => nil) }
     let(:bad_data_2) { WorldBank::Data.new(attrs_with 'value' => nil) }
 
-    
     it "should filter data with nil values" do
       CountryParser.stub(:data_from_official_country?).and_return(true)
       good_data = [good_data_1, good_data_2]

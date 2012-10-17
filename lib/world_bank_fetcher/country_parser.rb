@@ -12,7 +12,7 @@ module WorldBankFetcher
     end
     
     def self.data_from_official_country?(datum)
-      non_country_codes.include? datum.raw.country.id
+      !non_country_codes.include? datum.raw.country.id
     end
     
     private
